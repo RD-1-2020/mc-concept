@@ -3,15 +3,17 @@ version: '3.8'
 services:
   postgres:
     image: postgres:16
-    container_name: postgres_db
+    container_name: postgres_db_local
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
       PGDATA: /data/postgres
     volumes:
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
     networks:
-      - app-network
+      - app-network-local
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U user"]
@@ -21,46 +23,15 @@ services:
 
   nats:
     image: nats:2.10
-    container_name: nats_server
+    container_name: nats_server_local
+    ports:
+      - "4222:4222" # client port
+      - "8222:8222" # http monitoring
     networks:
-      - app-network
+      - app-network-local
     command: "-js" # Enable JetStream
     restart: unless-stopped
 
-  phoca:
-    build:
-      context: ..
-      dockerfile: docker/phoca.Dockerfile
-    container_name: phoca_service
-    networks:
-      - app-network
-    depends_on:
-      postgres:
-        condition: service_healthy
-      nats:
-        condition: service_started
-    restart: on-failure
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8888/phoca/default"]
-      interval: 15s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
-
-  pusa:
-    build:
-      context: ..
-      dockerfile: docker/pusa.Dockerfile
-    container_name: pusa_service
-    ports:
-      - "8080:8080" # Web UI
-    networks:
-      - app-network
-    depends_on:
-      phoca:
-        condition: service_healthy
-    restart: on-failure
-
 networks:
-  app-network:
+  app-network-local:
     driver: bridge
