@@ -9,3 +9,7 @@ CREATE TABLE properties (
   value VARCHAR(255) NOT NULL,
   PRIMARY KEY (application, profile, label, key)
 );
+
+-- changeset liquibase:2
+INSERT INTO properties (application, profile, label, key, value)
+VALUES ('pusa', 'default', '1.0', 'user.password.min-length', '8');

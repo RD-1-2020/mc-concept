@@ -1,0 +1,49 @@
+@startuml
+autonumber
+
+participant "Сервис Pusa" as Pusa
+participant "Phoca (Сервер конфигурации)" as Phoca
+database "PostgreSQL (БД phoca_db)" as Postgres
+
+Pusa -> Phoca: HTTP GET /pusa/default/1.0
+note right of Pusa
+  **Заголовки запроса:**
+  Accept: application/json
+end note
+
+Phoca -> Phoca: Получает запрос, делегирует в EnvironmentRepository
+Phoca -> Postgres: SELECT key, value FROM properties WHERE application = 'pusa' AND profile = 'default' AND label = '1.0'
+Postgres --> Phoca: Возвращает строки со свойствами
+
+Phoca -> Phoca: Конструирует объект Environment
+
+Phoca --> Pusa: HTTP 200 OK
+note left of Phoca
+  **Тело ответа (JSON):**
+  ```json
+  {
+    "name": "pusa",
+    "profiles": ["default"],
+    "label": "1.0",
+    "version": "...",
+    "state": null,
+    "propertySources": [
+      {
+        "name": "db:pusa-default-1.0",
+        "source": {
+          "password.policy.min-length": "8",
+          "password.policy.require-uppercase": "true",
+          "password.policy.require-lowercase": "true",
+          "password.policy.require-numbers": "true",
+          "password.policy.require-special": "false"
+        }
+      }
+    ]
+  }
+  ```
+end note
+
+Pusa -> Pusa: Заполняет Spring Environment полученными свойствами
+Pusa -> Pusa: Создает бины (включая PasswordPolicyProperties) с новыми значениями
+
+@enduml

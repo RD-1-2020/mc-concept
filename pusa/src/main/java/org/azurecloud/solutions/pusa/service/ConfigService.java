@@ -24,7 +24,7 @@ public class ConfigService {
 
     public String getConfiguration(String key) {
         String profile = getActiveProfile();
-        String label = "main";
+        String label = "1.0";
 
         GetConfigurationRequest request = GetConfigurationRequest.newBuilder()
                 .setKey(key)
@@ -38,7 +38,7 @@ public class ConfigService {
 
     public void updateConfiguration(String key, String value) {
         String profile = getActiveProfile();
-        String label = "main";
+        String label = "1.0";
 
         UpdateConfigurationRequest request = UpdateConfigurationRequest.newBuilder()
                 .setKey(key)

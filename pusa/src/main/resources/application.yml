@@ -17,12 +17,12 @@ spring:
     import: "configserver:http://127.0.0.1:8888"
   cloud:
     config:
+      label: "1.0"
       fail-fast: true
       retry:
         initial-interval: 2000
         max-attempts: 30
         max-interval: 3000
-      label: main
     bus:
       enabled: true
       id: ${spring.application.name}

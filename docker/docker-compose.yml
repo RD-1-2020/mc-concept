@@ -9,7 +9,6 @@ services:
       POSTGRES_PASSWORD: password
       PGDATA: /data/postgres
     volumes:
-      - postgres_data:/data/postgres
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - app-network
@@ -65,6 +64,3 @@ services:
 networks:
   app-network:
     driver: bridge
-
-volumes:
-  postgres_data:

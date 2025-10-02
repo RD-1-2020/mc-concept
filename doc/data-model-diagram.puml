@@ -1,0 +1,28 @@
+@startuml
+!theme plain
+hide circle
+skinparam linetype ortho
+
+title Диаграмма модели данных
+
+package "phoca_db" {
+    entity "properties" as properties {
+        * **application**: varchar <<PK>>
+        * **profile**: varchar <<PK>>
+        * **label**: varchar <<PK>>
+        * **key**: varchar <<PK>>
+        --
+        * value: varchar
+    }
+}
+
+package "pusa_db" {
+    entity "users" as users {
+        * **id**: bigint <<PK>>
+        --
+        * username: varchar
+        * password: varchar
+    }
+}
+
+@enduml

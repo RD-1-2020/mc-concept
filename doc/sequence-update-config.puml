@@ -1,0 +1,82 @@
+@startuml
+autonumber
+
+actor Пользователь as User
+participant "Pusa (Фронтенд)" as Pusa_UI
+participant "Pusa (Бэкенд)" as Pusa_API
+participant "Phoca (gRPC и Конфигурация)" as Phoca
+database "PostgreSQL" as Postgres
+queue "NATS" as NATS
+
+User -> Pusa_UI: Отправляет форму с новыми значениями
+Pusa_UI -> Pusa_API: POST /policy/update
+note right of Pusa_UI
+  **Тело запроса (Form Data):**
+  minLength=10&requireUppercase=on&requireLowercase=on&requireNumbers=on&requireSpecial=off
+end note
+
+Pusa_API -> Phoca: gRPC: UpdateConfiguration (для каждого измененного свойства)
+note right of Pusa_API
+  **Пример gRPC Payload:**
+  Или можно обновлять целиком категорию, зависит от контракта.
+  ```proto
+  key: "password.policy.min-length"
+  value: "10"
+  application: "pusa"
+  profile: "default"
+  label: "1.0"
+  ```
+end note
+
+Phoca -> Postgres: UPDATE properties SET value = '10' WHERE key = 'password.policy.min-length' AND ...
+Postgres --> Phoca: Success
+Phoca --> Pusa_API: gRPC Response: Success
+Pusa_API -> Pusa_UI: HTTP 302 Redirect на /policy
+
+par
+    Phoca -> NATS: Публикует сообщение в топик 'config-bus'
+    note right of Phoca
+      **Тело сообщения в NATS (JSON):**
+      ```json
+      {
+        "type": "RefreshRemoteApplicationEvent",
+        "timestamp": 1672531200000,
+        "originService": "phoca",
+        "destinationService": "pusa",
+        "id": "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+      }
+      ```
+    end note
+else
+    Pusa_UI -> Pusa_API: GET /policy (после редиректа)
+    Pusa_API -> Phoca: gRPC: GetConfiguration(key: "password.policy.min-length", ...)
+    note right of Pusa_API
+      Один запрос для каждого свойства политики
+    end note
+    Phoca --> Pusa_API: Возвращает актуальные значения
+    Pusa_API --> Pusa_UI: Отображает страницу с обновленными данными
+end
+
+NATS --> Pusa_API: Получает событие RefreshRemoteApplicationEvent
+Pusa_API -> Phoca: HTTP GET /pusa/default/1.0 для получения обновленных свойств
+note left of Phoca
+  **Тело ответа (JSON):**
+  ```json
+  {
+    "name": "pusa",
+    "profiles": ["default"],
+    "label": "1.0",
+    "propertySources": [
+      {
+        "name": "db:pusa-default-1.0",
+        "source": { "password.policy.min-length": "10", ... }
+      }
+    ]
+  }
+  ```
+end note
+Phoca --> Pusa_API: HTTP 200 OK с обновленным JSON
+Pusa_API -> Pusa_API: Обновляет внутренний Environment
+Pusa_API -> Pusa_API: Очищает кэш @RefreshScope и пересоздает бин PasswordPolicyProperties
+
+@enduml
