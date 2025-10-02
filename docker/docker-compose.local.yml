@@ -9,11 +9,10 @@ services:
     image: postgres:16
     container_name: postgres_db_local
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
       PGDATA: /data/postgres
     volumes:
-      - postgres_data_local:/data/postgres
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
@@ -40,6 +39,3 @@ services:
 networks:
   app-network-local:
     driver: bridge
-
-volumes:
-  postgres_data_local:

@@ -21,14 +21,22 @@ public class UserController {
 
     @GetMapping
     public String listUsers(Model model) {
+        if (!model.containsAttribute("user")) {
+            model.addAttribute("user", new User());
+        }
         model.addAttribute("users", userService.findAll());
-        model.addAttribute("user", new User());
         return "users";
     }
 
     @PostMapping
-    public String createUser(@ModelAttribute User user) {
-        userService.createUser(user);
-        return "redirect:/users";
+    public String createUser(@ModelAttribute User user, Model model) {
+        try {
+            userService.createUser(user);
+            return "redirect:/users";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            // Need to pass the list of users and the user object back to the form
+            return listUsers(model);
+        }
     }
 }

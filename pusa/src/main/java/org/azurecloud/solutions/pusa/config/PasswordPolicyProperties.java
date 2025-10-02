@@ -1,12 +1,11 @@
 package org.azurecloud.solutions.pusa.config;
 
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
+@Data
+@RefreshScope
 @ConfigurationProperties(prefix = "password.policy")
 public class PasswordPolicyProperties {
 

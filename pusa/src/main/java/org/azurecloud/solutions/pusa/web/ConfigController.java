@@ -24,7 +24,15 @@ public class ConfigController {
 
     @GetMapping
     public String getPolicyPage(Model model) {
-        model.addAttribute("policy", passwordPolicyProperties);
+        // Fetch fresh properties directly from Phoca to ensure the UI shows the most up-to-date values
+        PasswordPolicyProperties freshPolicy = new PasswordPolicyProperties();
+        freshPolicy.setMinLength(Integer.parseInt(configService.getConfiguration("password.policy.min-length")));
+        freshPolicy.setRequireUppercase(Boolean.parseBoolean(configService.getConfiguration("password.policy.require-uppercase")));
+        freshPolicy.setRequireLowercase(Boolean.parseBoolean(configService.getConfiguration("password.policy.require-lowercase")));
+        freshPolicy.setRequireNumbers(Boolean.parseBoolean(configService.getConfiguration("password.policy.require-numbers")));
+        freshPolicy.setRequireSpecial(Boolean.parseBoolean(configService.getConfiguration("password.policy.require-special")));
+
+        model.addAttribute("policy", freshPolicy);
         return "policy";
     }
 

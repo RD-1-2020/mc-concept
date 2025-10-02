@@ -22,23 +22,25 @@ spring:
         initial-interval: 2000
         max-attempts: 30
         max-interval: 3000
+      label: main
+    bus:
+      enabled: true
+      id: ${spring.application.name}
+      destination: "config-bus" # Same destination as phoca
+      nats:
+        server-url: "nats://localhost:4222"
+        destination: "config-bus"
   datasource:
     url: jdbc:postgresql://localhost:5432/pusa_db
-    username: user
-    password: password
+    username: postgres
+    password: postgres
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: none
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
-  bus:
-    enabled: true
-    id: ${spring.application.name}:${server.port}
-    destination: "config-bus" # Same destination as phoca
-    nats:
-      server-url: "nats://localhost:4222"
-      destination: "config-bus"
+
 
 # gRPC client configuration
 grpc:

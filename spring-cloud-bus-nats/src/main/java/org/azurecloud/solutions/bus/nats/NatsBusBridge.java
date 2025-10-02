@@ -10,7 +10,6 @@ import org.springframework.cloud.bus.BusBridge;
 import org.springframework.cloud.bus.BusProperties;
 import org.springframework.cloud.bus.event.RemoteApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.util.StringUtils;
 
 import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
@@ -54,13 +53,8 @@ public class NatsBusBridge implements BusBridge {
     @Override
     public void send(RemoteApplicationEvent event) {
         try {
-            if (!StringUtils.hasText(event.getDestinationService())) {
-                String json = objectMapper.writeValueAsString(event);
-                natsConnection.publish(natsBusProperties.getDestination(), json.getBytes(StandardCharsets.UTF_8));
-            } else {
-                 // Destination-specific logic can be added here if needed
-                 log.warn("Destination-specific events are not yet implemented for NATS bus.");
-            }
+            String json = objectMapper.writeValueAsString(event);
+            natsConnection.publish(natsBusProperties.getDestination(), json.getBytes(StandardCharsets.UTF_8));
         } catch (JsonProcessingException e) {
             log.error("Error serializing event to JSON", e);
         }

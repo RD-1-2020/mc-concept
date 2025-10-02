@@ -1,7 +1,7 @@
 --liquibase formatted sql
 
 --changeset mestr:2
-INSERT INTO PROPERTIES (APPLICATION, PROFILE, LABEL, KEY, VALUE)
+INSERT INTO properties (application, profile, label, key, value)
 VALUES ('pusa', 'default', 'main', 'password.policy.min-length', '8'),
        ('pusa', 'default', 'main', 'password.policy.require-uppercase', 'true'),
        ('pusa', 'default', 'main', 'password.policy.require-lowercase', 'true'),

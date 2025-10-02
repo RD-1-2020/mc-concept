@@ -6,6 +6,7 @@ import org.azurecloud.solutions.shared.props.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.bus.BusProperties;
 import org.springframework.cloud.bus.event.RefreshRemoteApplicationEvent;
+import org.springframework.cloud.config.server.environment.EnvironmentRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -15,36 +16,51 @@ public class ConfigurationServiceImpl extends ConfigurationServiceGrpc.Configura
     private final JdbcTemplate jdbcTemplate;
     private final ApplicationEventPublisher publisher;
     private final BusProperties busProperties;
+    private final EnvironmentRepository environmentRepository;
 
     @Autowired
-    public ConfigurationServiceImpl(JdbcTemplate jdbcTemplate, ApplicationEventPublisher publisher, BusProperties busProperties) {
+    public ConfigurationServiceImpl(JdbcTemplate jdbcTemplate, ApplicationEventPublisher publisher, BusProperties busProperties, EnvironmentRepository environmentRepository) {
         this.jdbcTemplate = jdbcTemplate;
         this.publisher = publisher;
         this.busProperties = busProperties;
+        this.environmentRepository = environmentRepository;
     }
 
     @Override
     public void getConfiguration(GetConfigurationRequest request, StreamObserver<GetConfigurationResponse> responseObserver) {
-        String sql = "SELECT VALUE FROM PROPERTIES WHERE KEY = ? AND APPLICATION = ? AND PROFILE = ? AND LABEL = ?";
-        String value = jdbcTemplate.queryForObject(sql, new Object[]{request.getKey(), request.getApplication(), request.getProfile(), request.getLabel()}, String.class);
+        org.springframework.cloud.config.environment.Environment environment = environmentRepository.findOne(
+                request.getApplication(),
+                request.getProfile(),
+                request.getLabel()
+        );
 
-        GetConfigurationResponse response = GetConfigurationResponse.newBuilder()
+        String value = environment.getPropertySources().stream()
+                .map(org.springframework.cloud.config.environment.PropertySource::getSource) // Get the underlying Map
+                .filter(source -> source.containsKey(request.getKey()))
+                .map(source -> source.get(request.getKey()))
+                .map(String::valueOf)
+                .findFirst()
+                .orElse(null);
+
+        GetConfigurationResponse.Builder responseBuilder = GetConfigurationResponse.newBuilder()
                 .setKey(request.getKey())
-                .setValue(value)
                 .setApplication(request.getApplication())
                 .setProfile(request.getProfile())
-                .setLabel(request.getLabel())
-                .build();
-        responseObserver.onNext(response);
+                .setLabel(request.getLabel());
+
+        if (value != null) {
+            responseBuilder.setValue(value);
+        }
+
+        responseObserver.onNext(responseBuilder.build());
         responseObserver.onCompleted();
     }
 
     @Override
     public void updateConfiguration(UpdateConfigurationRequest request, StreamObserver<UpdateConfigurationResponse> responseObserver) {
-        String sql = "UPDATE PROPERTIES SET VALUE = ? WHERE KEY = ? AND APPLICATION = ? AND PROFILE = ? AND LABEL = ?";
+        String sql = "UPDATE properties SET value = ? WHERE key = ? AND application = ? AND profile = ? AND label = ?";
         jdbcTemplate.update(sql, request.getValue(), request.getKey(), request.getApplication(), request.getProfile(), request.getLabel());
 
-        // Publish refresh event to the specific application that was changed
         publisher.publishEvent(new RefreshRemoteApplicationEvent(this,
                 this.busProperties.getId(),
                 request::getApplication));

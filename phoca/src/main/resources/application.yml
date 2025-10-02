@@ -6,25 +6,28 @@ spring:
     name: phoca
   profiles:
     active: jdbc
+  cloud:
+    config:
+      server:
+        jdbc:
+          sql: "SELECT key, value FROM properties WHERE application = ? AND profile = ? AND label = ?"
+    bus:
+      enabled: true
+      id: ${spring.application.name}
+      destination: "config-bus"
+      nats:
+        server-url: "nats://localhost:4222"
+        destination: "config-bus"
   datasource:
     url: jdbc:postgresql://localhost:5432/phoca_db
-    username: user
-    password: password
+    username: postgres
+    password: postgres
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: none
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
-
-# Spring Cloud Bus with NATS
-spring.cloud.bus:
-  enabled: true
-  id: ${spring.application.name}:${server.port}
-  destination: "config-bus"
-  nats:
-    server-url: "nats://localhost:4222"
-    destination: "config-bus"
 
 # gRPC server port
 grpc:
