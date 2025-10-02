@@ -1,36 +1,45 @@
 version: '3.8'
 
+# This compose file is intended for local development.
+# It starts the required infrastructure (Postgres, NATS) and exposes their ports
+# so you can run the application services (pusa, phoca) from your IDE.
+
 services:
   postgres:
     image: postgres:16
-    container_name: postgres_db
+    container_name: postgres_db_local
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       PGDATA: /data/postgres
     volumes:
-      - postgres:/data/postgres
+      - postgres_data_local:/data/postgres
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
     networks:
-      - app-network
+      - app-network-local
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   nats:
     image: nats:2.10
-    container_name: nats_server
+    container_name: nats_server_local
     ports:
       - "4222:4222" # client port
       - "8222:8222" # http monitoring
     networks:
-      - app-network
+      - app-network-local
     command: "-js" # Enable JetStream
     restart: unless-stopped
 
 networks:
-  app-network:
+  app-network-local:
     driver: bridge
 
 volumes:
-  postgres:
+  postgres_data_local:

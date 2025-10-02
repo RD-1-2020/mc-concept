@@ -1,7 +1,7 @@
 [versions]
 java = "24"
 springBoot = "3.5.3"
-springCloud = "2023.0.1"
+springCloud = "2025.0.0"
 springDependencyManagement = "1.1.5"
 lombok = "1.18.42"
 grpc = "1.75.0"
@@ -27,10 +27,12 @@ jnats = { module = "io.nats:jnats", version.ref = "jnats"}
 grpc-server-starter = { module = "net.devh:grpc-server-spring-boot-starter", version.ref = "grpcStarter" }
 grpc-client-starter = { module = "net.devh:grpc-client-spring-boot-starter", version.ref = "grpcStarter" }
 
-# Pusa dependencies
+# Spring Boot
+spring-boot-configuration-processor = { group = "org.springframework.boot", name = "spring-boot-configuration-processor" }
 spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
 spring-boot-starter-thymeleaf = { group = "org.springframework.boot", name = "spring-boot-starter-thymeleaf" }
 spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
+spring-boot-starter-json = { group = "org.springframework.boot", name = "spring-boot-starter-json" }
 spring-cloud-starter-config = { group = "org.springframework.cloud", name = "spring-cloud-starter-config" }
 spring-cloud-bus = { group = "org.springframework.cloud", name = "spring-cloud-bus" }
 postgresql = { group = "org.postgresql", name = "postgresql" }

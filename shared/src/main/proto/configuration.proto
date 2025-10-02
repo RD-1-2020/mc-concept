@@ -12,20 +12,32 @@ service ConfigurationService {
 }
 
 message GetConfigurationRequest {
-  string name = 1;
+  string key = 1;
+  string application = 2;
+  string profile = 3;
+  string label = 4;
 }
 
 message GetConfigurationResponse {
-  string name = 1;
+  string key = 1;
   string value = 2;
+  string application = 3;
+  string profile = 4;
+  string label = 5;
 }
 
 message UpdateConfigurationRequest {
-  string name = 1;
+  string key = 1;
   string value = 2;
+  string application = 3;
+  string profile = 4;
+  string label = 5;
 }
 
 message UpdateConfigurationResponse {
-  string name = 1;
+  string key = 1;
   string value = 2;
+  string application = 3;
+  string profile = 4;
+  string label = 5;
 }

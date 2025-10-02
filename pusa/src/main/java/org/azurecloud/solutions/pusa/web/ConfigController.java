@@ -1,53 +1,42 @@
 package org.azurecloud.solutions.pusa.web;
 
+import org.azurecloud.solutions.pusa.config.PasswordPolicyProperties;
 import org.azurecloud.solutions.pusa.service.ConfigService;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/config")
-@RefreshScope
+@RequestMapping("/policy")
 public class ConfigController {
 
     private final ConfigService configService;
+    private final PasswordPolicyProperties passwordPolicyProperties;
 
-    @Value("${user.password.min-length}")
-    private int minPasswordLength;
-
-    public ConfigController(ConfigService configService) {
+    @Autowired
+    public ConfigController(ConfigService configService, PasswordPolicyProperties passwordPolicyProperties) {
         this.configService = configService;
+        this.passwordPolicyProperties = passwordPolicyProperties;
     }
 
-    // HTML Page
-    @GetMapping("/policy")
-    public String policyPage(Model model) {
-        model.addAttribute("minLength", minPasswordLength);
+    @GetMapping
+    public String getPolicyPage(Model model) {
+        model.addAttribute("policy", passwordPolicyProperties);
         return "policy";
     }
 
-    @PostMapping("/policy")
-    public String updatePolicy(@RequestParam("minLength") String minLength) {
-        configService.updateConfiguration("user.password.min-length", minLength);
-        return "redirect:/config/policy";
-    }
-
-    // REST API
-    @GetMapping("/api/min-length")
-    @ResponseBody
-    public Map<String, Object> getMinLength() {
-        return Map.of("user.password.min-length", minPasswordLength);
-    }
-
-    @PostMapping("/api/min-length")
-    @ResponseBody
-    public Map<String, String> updateMinLength(@RequestBody Map<String, String> payload) {
-        String value = payload.get("value");
-        configService.updateConfiguration("user.password.min-length", value);
-        return Map.of("status", "ok");
+    @PostMapping("/update")
+    public String updatePolicy(PasswordPolicyProperties policy) {
+        configService.updateConfiguration("password.policy.min-length", String.valueOf(policy.getMinLength()));
+        configService.updateConfiguration("password.policy.require-uppercase", String.valueOf(policy.isRequireUppercase()));
+        configService.updateConfiguration("password.policy.require-lowercase", String.valueOf(policy.isRequireLowercase()));
+        configService.updateConfiguration("password.policy.require-numbers", String.valueOf(policy.isRequireNumbers()));
+        configService.updateConfiguration("password.policy.require-special", String.valueOf(policy.isRequireSpecial()));
+        // Note: After this, a refresh event should be received via NATS to update the properties bean.
+        // For immediate feedback on the UI, we might need to wait or manually trigger a refresh.
+        return "redirect:/policy";
     }
 }
