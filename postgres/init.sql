@@ -1,0 +1,2 @@
+CREATE DATABASE phoca_db;
+CREATE DATABASE pusa_db;

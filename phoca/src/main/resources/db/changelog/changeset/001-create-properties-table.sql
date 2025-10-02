@@ -1,0 +1,15 @@
+-- liquibase formatted sql
+
+-- changeset liquibase:1
+CREATE TABLE PROPERTIES (
+  APPLICATION VARCHAR(255) NOT NULL,
+  PROFILE VARCHAR(255) NOT NULL,
+  LABEL VARCHAR(255) NOT NULL,
+  KEY VARCHAR(255) NOT NULL,
+  VALUE VARCHAR(255) NOT NULL,
+  PRIMARY KEY (APPLICATION, PROFILE, LABEL, KEY)
+);
+
+-- changeset liquibase:2
+INSERT INTO PROPERTIES (APPLICATION, PROFILE, LABEL, KEY, VALUE)
+VALUES ('pusa', 'default', 'main', 'user.password.min-length', '8');

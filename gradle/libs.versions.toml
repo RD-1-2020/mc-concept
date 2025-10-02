@@ -1,0 +1,43 @@
+[versions]
+java = "24"
+springBoot = "3.5.3"
+springCloud = "2023.0.1"
+springDependencyManagement = "1.1.5"
+lombok = "1.18.32"
+grpc = "1.75.0"
+protobuf = "3.25.3"
+protobufPlugin = "0.9.5"
+jakartaAnnotation = "3.0.0"
+jnats = "2.23.0"
+grpcStarter = "3.1.0.RELEASE"
+
+[libraries]
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
+
+# gRPC
+grpc-stub = { module = "io.grpc:grpc-stub", version.ref = "grpc" }
+grpc-protobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpc" }
+grpc-netty = { module = "io.grpc:grpc-netty-shaded", version.ref = "grpc" }
+protoc = { module = "com.google.protobuf:protoc", version.ref = "protobuf" }
+jakarta-annotation-api = { module = "jakarta.annotation:jakarta.annotation-api", version.ref = "jakartaAnnotation" }
+jnats = { module = "io.nats:jnats", version.ref = "jnats"}
+
+# gRPC Starter
+grpc-server-starter = { module = "net.devh:grpc-server-spring-boot-starter", version.ref = "grpcStarter" }
+grpc-client-starter = { module = "net.devh:grpc-client-spring-boot-starter", version.ref = "grpcStarter" }
+
+# Pusa dependencies
+spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
+spring-boot-starter-thymeleaf = { group = "org.springframework.boot", name = "spring-boot-starter-thymeleaf" }
+spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
+spring-cloud-starter-config = { group = "org.springframework.cloud", name = "spring-cloud-starter-config" }
+spring-cloud-bus = { group = "org.springframework.cloud", name = "spring-cloud-bus" }
+postgresql = { group = "org.postgresql", name = "postgresql" }
+liquibase-core = { group = "org.liquibase", name = "liquibase-core" }
+
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "springDependencyManagement" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }

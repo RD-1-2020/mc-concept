@@ -1,0 +1,36 @@
+plugins {
+    alias libs.plugins.protobuf
+}
+
+dependencies {
+    implementation libs.grpc.stub
+    implementation libs.grpc.protobuf
+    implementation libs.jakarta.annotation.api
+    runtimeOnly libs.grpc.netty
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'build/generated/source/proto/main/grpc', 'build/generated/source/proto/main/java'
+        }
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = libs.protoc.get().toString()
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${libs.versions.grpc.get()}"
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.plugins {
+                grpc {}
+            }
+        }
+    }
+}

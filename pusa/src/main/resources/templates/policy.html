@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Password Policy</title>
+</head>
+<body>
+<h1>Password Policy</h1>
+<p>Current minimum password length: <b th:text="${minLength}"></b></p>
+
+<form th:action="@{/config/policy}" method="post">
+    <div>
+        <label for="minLength">New minimum length:</label>
+        <input type="number" id="minLength" name="minLength" th:value="${minLength}" />
+    </div>
+    <button type="submit">Update</button>
+</form>
+<br>
+<a href="/users">Go to User Management</a>
+</body>
+</html>

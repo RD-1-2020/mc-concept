@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: pusa
+  cloud:
+    config:
+      uri: http://localhost:8888
+      fail-fast: true # Fail startup if config server is not available
+      retry:
+        initial-interval: 2000
+        max-attempts: 30

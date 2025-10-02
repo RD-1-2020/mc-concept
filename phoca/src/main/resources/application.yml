@@ -1,0 +1,32 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: phoca
+  profiles:
+    active: jdbc
+  datasource:
+    url: jdbc:postgresql://localhost:5432/phoca_db
+    username: user
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+# Spring Cloud Bus with NATS
+spring.cloud.bus:
+  enabled: true
+  id: ${spring.application.name}:${server.port}
+  destination: "config-bus"
+  nats:
+    server-url: "nats://localhost:4222"
+    destination: "config-bus"
+
+# gRPC server port
+grpc:
+  server:
+    port: 9090

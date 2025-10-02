@@ -1,0 +1,23 @@
+plugins {
+    alias libs.plugins.spring.boot
+    alias libs.plugins.spring.dependency.management
+}
+
+dependencies {
+    implementation libs.spring.boot.starter.web
+    implementation libs.spring.boot.starter.thymeleaf
+    implementation libs.spring.boot.starter.data.jpa
+    implementation libs.spring.cloud.starter.config
+    implementation libs.spring.cloud.bus
+    implementation project(':spring-cloud-bus-nats')
+    implementation project(':shared')
+
+    implementation libs.grpc.client.starter
+
+    runtimeOnly libs.postgresql
+    implementation libs.liquibase.core
+}
+
+jar {
+    enabled = false
+}

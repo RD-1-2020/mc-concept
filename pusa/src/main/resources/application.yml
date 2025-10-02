@@ -1,0 +1,41 @@
+server:
+  port: 8080
+
+# This will be overridden by the config from the config server
+user:
+  password:
+    min-length: 6 # Default value
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pusa_db
+    username: user
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+  cloud:
+    bus:
+      enabled: true
+      id: ${spring.application.name}:${server.port}
+      destination: "config-bus" # Same destination as phoca
+      nats:
+        server-url: "nats://localhost:4222"
+        destination: "config-bus"
+
+# gRPC client configuration
+grpc:
+  client:
+    phoca-service:
+      address: 'static://localhost:9090'
+      enable-keep-alive: true
+      negotiation-type: plaintext
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "refresh,busrefresh,health"

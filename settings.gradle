@@ -1,0 +1,6 @@
+rootProject.name = 'mc-concept'
+
+include 'pusa'
+include 'phoca'
+include 'shared'
+include 'spring-cloud-bus-nats'
