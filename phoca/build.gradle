@@ -12,6 +12,8 @@ dependencies {
     implementation project(':shared')
 
     implementation libs.spring.grpc.server.starter
+    implementation("com.google.guava:failureaccess:1.0.3")
+    implementation libs.grpc.stub
 
     runtimeOnly libs.postgresql
     implementation libs.liquibase.core

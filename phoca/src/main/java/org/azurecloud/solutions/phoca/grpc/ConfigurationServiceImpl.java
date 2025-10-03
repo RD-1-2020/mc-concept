@@ -1,15 +1,17 @@
 package org.azurecloud.solutions.phoca.grpc;
 
 import io.grpc.stub.StreamObserver;
-import net.devh.boot.grpc.server.service.GrpcService;
 import org.azurecloud.solutions.shared.props.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.bus.BusProperties;
 import org.springframework.cloud.bus.event.RefreshRemoteApplicationEvent;
 import org.springframework.cloud.config.server.environment.EnvironmentRepository;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.grpc.server.service.GrpcService;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
 
+@Service
 @GrpcService
 public class ConfigurationServiceImpl extends ConfigurationServiceGrpc.ConfigurationServiceImplBase {
 

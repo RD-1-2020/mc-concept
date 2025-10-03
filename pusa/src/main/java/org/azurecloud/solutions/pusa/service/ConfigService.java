@@ -1,25 +1,24 @@
 package org.azurecloud.solutions.pusa.service;
 
-import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.azurecloud.solutions.shared.props.*;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ConfigService {
-
-    @GrpcClient("phoca-service")
-    private ConfigurationServiceGrpc.ConfigurationServiceBlockingStub configurationServiceStub;
+    private final ConfigurationServiceGrpc.ConfigurationServiceBlockingStub configurationServiceStub;
 
     private final String applicationName;
     private final Environment environment;
 
-    @Autowired
-    public ConfigService(@Value("${spring.application.name}") String applicationName, Environment environment) {
+    public ConfigService(@Value("${spring.application.name}") String applicationName,
+                         Environment environment,
+                         ConfigurationServiceGrpc.ConfigurationServiceBlockingStub configurationServiceStub) {
         this.applicationName = applicationName;
         this.environment = environment;
+        this.configurationServiceStub = configurationServiceStub;
     }
 
     public String getConfiguration(String key) {

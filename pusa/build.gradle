@@ -12,7 +12,8 @@ dependencies {
     implementation project(':spring-cloud-bus-nats')
     implementation project(':shared')
 
-    implementation libs.grpc.client.starter
+    implementation libs.spring.grpc.client.starter
+    implementation libs.guava.failureaccess
 
     runtimeOnly libs.postgresql
     implementation libs.liquibase.core

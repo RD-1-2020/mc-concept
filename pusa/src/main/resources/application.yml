@@ -13,6 +13,12 @@ password:
 spring:
   application:
     name: pusa
+  grpc:
+    client:
+      default-channel:
+        address: 'static://localhost:9090'
+        enable-keep-alive: true
+        negotiation-type: plaintext
   config:
     import: "configserver:http://127.0.0.1:8888"
   cloud:
@@ -40,15 +46,6 @@ spring:
       ddl-auto: none
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
-
-
-# gRPC client configuration
-grpc:
-  client:
-    phoca-service:
-      address: 'static://localhost:9090'
-      enable-keep-alive: true
-      negotiation-type: plaintext
 
 management:
   endpoints:

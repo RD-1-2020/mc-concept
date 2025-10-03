@@ -28,8 +28,6 @@ spring:
       ddl-auto: none
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
-
-# gRPC server port
-grpc:
-  server:
-    port: 9090
+  grpc:
+    server:
+      port: 9090
