@@ -4,12 +4,12 @@ springBoot = "3.5.3"
 springCloud = "2025.0.0"
 springDependencyManagement = "1.1.5"
 lombok = "1.18.42"
-grpc = "1.75.0"
-protobuf = "3.25.3"
+grpc = "1.63.0"
+protobuf = "3.25.1"
 protobufPlugin = "0.9.5"
 jakartaAnnotation = "3.0.0"
 jnats = "2.23.0"
-grpcStarter = "3.1.0.RELEASE"
+springGrpc = "0.11.0"
 
 [libraries]
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
@@ -23,20 +23,25 @@ protoc = { module = "com.google.protobuf:protoc", version.ref = "protobuf" }
 jakarta-annotation-api = { module = "jakarta.annotation:jakarta.annotation-api", version.ref = "jakartaAnnotation" }
 jnats = { module = "io.nats:jnats", version.ref = "jnats"}
 
-# gRPC Starter
-grpc-server-starter = { module = "net.devh:grpc-server-spring-boot-starter", version.ref = "grpcStarter" }
-grpc-client-starter = { module = "net.devh:grpc-client-spring-boot-starter", version.ref = "grpcStarter" }
+# Spring gRPC
+spring-grpc-server-starter = { module = "org.springframework.grpc:spring-grpc-server-spring-boot-starter", version.ref = "springGrpc" }
+spring-grpc-client-starter = { module = "org.springframework.grpc:spring-grpc-client-spring-boot-starter", version.ref = "springGrpc" }
 
 # Spring Boot
 spring-boot-configuration-processor = { group = "org.springframework.boot", name = "spring-boot-configuration-processor" }
 spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
 spring-boot-starter-thymeleaf = { group = "org.springframework.boot", name = "spring-boot-starter-thymeleaf" }
 spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
+spring-boot-starter-jdbc = { group = "org.springframework.boot", name = "spring-boot-starter-jdbc" }
 spring-boot-starter-json = { group = "org.springframework.boot", name = "spring-boot-starter-json" }
 spring-cloud-starter-config = { group = "org.springframework.cloud", name = "spring-cloud-starter-config" }
+spring-cloud-config-server = { group = "org.springframework.cloud", name = "spring-cloud-config-server" }
 spring-cloud-bus = { group = "org.springframework.cloud", name = "spring-cloud-bus" }
 postgresql = { group = "org.postgresql", name = "postgresql" }
 liquibase-core = { group = "org.liquibase", name = "liquibase-core" }
+
+# Guava
+guava-jre = { module = "com.google.guava:guava", version.ref = "guava" }
 
 
 [plugins]
